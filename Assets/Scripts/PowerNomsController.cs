@@ -10,11 +10,5 @@ public class PowerNomsController : NomsController
         FindObjectOfType<GameManager>().PowerNomEat(this);
 
     }
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.gameObject.layer == LayerMask.NameToLayer("Pacman"))
-        {
-            Eat();
-        }
-    }
+
 }

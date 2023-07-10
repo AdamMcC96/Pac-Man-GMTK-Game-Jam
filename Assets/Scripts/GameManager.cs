@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class GameManager : MonoBehaviour
@@ -7,9 +5,8 @@ public class GameManager : MonoBehaviour
     public Transform noms;
     public GameObject pacman;
     public GameObject ghost;
-
-    private EnemyController eControl;
-    public int score { get; private set; } // public get, private set
+    public GameObject youWon, youDied, panel;
+    public EnemyController eControl;
     // Start is called before the first frame update
     void Start()
     {
@@ -18,7 +15,7 @@ public class GameManager : MonoBehaviour
 
     private void NewGame()
     {
-        SetScore(0);
+
         NewRound();
     }
 
@@ -40,20 +37,29 @@ public class GameManager : MonoBehaviour
     {
         this.pacman.gameObject.SetActive(false);
         this.ghost.gameObject.SetActive(false);
+        panel.SetActive(true);
+        youDied.SetActive(true);
+    }
+    private void GameWin()
+    {
+        Debug.Log("WIN");
+        this.pacman.gameObject.SetActive(false);
+        this.ghost.gameObject.SetActive(false);
+        panel.SetActive(true);
+        youWon.SetActive(true);
     }
 
     public void GhostEaten()
     {
         this.ghost.SetActive(false);
+        GameOver();
     }
     public void PacmanEaten()
     {
+        this.pacman.SetActive(false);
+        GameWin();
+    }
 
-    }
-    private void SetScore(int score)
-    {
-        this.score = score;
-    }
 
     public void NomEat(NomsController nom)
     {
@@ -68,16 +74,20 @@ public class GameManager : MonoBehaviour
     {
         eControl.playerAttackable = false;
     }
-    public void PowerNomEat(NomsController nom)
+    public void PowerNomEat(PowerNomsController nom)
     {
-        NomEat(nom);
         eControl.playerAttackable = true;
+        
+        NomEat(nom);
+        Debug.Log("NOMNOM");
+   
         Invoke(nameof(ResetPlayerAttack), 8f);
     }
 
     private bool RemainingNoms()
     {
-        foreach(Transform nom in this.noms){
+        foreach (Transform nom in this.noms)
+        {
             if (nom.gameObject.activeSelf)
             {
                 return true;

@@ -16,47 +16,57 @@ public class EnemyController : MonoBehaviour
 
     public float sightRange, attackRange;
     public bool playerInSight, nomInSight;
-    public bool playerAttackable = false;
+    public bool playerAttackable;
     
     // Start is called before the first frame update
     private void Awake()
     {
         player = GameObject.Find("Player").transform;
         agent = GetComponent<NavMeshAgent>();
-        //playerAttackable = false;
     }
 
     private void Update()
     {
         playerInSight = Physics.CheckSphere(transform.position, sightRange, playerCheck);
-        playerAttackable = Physics.CheckSphere(transform.position, attackRange, playerCheck);
+        //playerAttackable = Physics.CheckSphere(transform.position, attackRange, playerCheck);
         nomInSight = Physics.CheckSphere(transform.position, sightRange, nomCheck);
 
-        if (!playerAttackable && !playerInSight && nomInSight)
+        if (playerAttackable == false && playerInSight == false && nomInSight == true) Eating();
+        
+        if(playerInSight == true && playerAttackable == false) RunAway();
+        
+        if(playerAttackable == true && playerInSight == true) Attack();
+        
+        
+    }
+    private void OnTriggerEnter(Collider other)
+    {
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Player"))
         {
-            Eating();
-        } 
-        if(playerInSight && !playerAttackable)
-        {
-            RunAway();
-        }
-        if(playerAttackable && playerInSight)
-        {
-            Attack();
+            if(playerAttackable == true)
+            {
+                FindObjectOfType<GameManager>().GhostEaten();
+            }if(playerAttackable == false)
+            {
+                FindObjectOfType<GameManager>().PacmanEaten();
+            }
         }
     }
-
 
     private void Eating()
     {
-        agent.SetDestination(nom.position);
+        agent.SetDestination(transform.position + nom.position);
+        Debug.Log("Eat");
     }
     private void RunAway()
     {
-
+        Debug.Log("Run");
+        agent.SetDestination(transform.position - player.position);
     }
     private void Attack()
     {
+        Debug.Log("Attack");
         agent.SetDestination(player.position);
         transform.LookAt(player);
     }

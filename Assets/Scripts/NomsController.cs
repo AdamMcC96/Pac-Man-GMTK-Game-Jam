@@ -11,7 +11,7 @@ public class NomsController : MonoBehaviour
     }
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("Layer ");
+
         if (other.gameObject.layer == LayerMask.NameToLayer("Pacman"))
         {
             
